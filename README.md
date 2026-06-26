@@ -1,109 +1,105 @@
-![CommandoLogo](Images/commando-readme.png)
+<div align="center">
+    <img src="Images/commando-readme.png" alt="CommandoVM" width="450"/>
+</div>
 
-## What is CommandoVM?
+# CommandoVM
 
-**Complete Mandiant Offensive VM ("CommandoVM")** is a comprehensive and customizable, Windows-based security distribution for penetration testing and red teaming. CommandoVM comes packaged with a variety of offensive tools not included in [Kali Linux](https://www.kali.org/) which highlight the effectiveness of Windows as an attack platform.
+Complete Mandiant Offensive VM — a customizable Windows-based security distribution for penetration testing and red teaming. CommandoVM packages a wide array of offensive tools that highlight the effectiveness of Windows as an attack platform, complementing what you'd find in [Kali Linux](https://www.kali.org/).
 
 ## Requirements
-* Windows 10
-> Insider Preview editions of Windows are not supported
-* 60 GB Hard Drive
-* 2 GB RAM
 
-## Recommended
-* Windows 10 22H2
-* 80+ GB Hard Drive
-* 4+ GB RAM
-* 2 network adapters
+| Component | Minimum | Recommended |
+|-----------|---------|-------------|
+| OS | Windows 10 | Windows 10 22H2 |
+| Storage | 60 GB | 80+ GB |
+| RAM | 2 GB | 4+ GB |
+| Network | 1 adapter | 2 adapters |
 
-# Install Instructions
-Deploy a Windows Virtual Machine
-   > [Where can I find a Windows 10 Virtual Machine?](https://www.microsoft.com/en-us/software-download/windows10ISO)
+> Insider Preview editions of Windows are not supported.
 
-## Pre-Install Procedures
-**You MUST disable Windows Defender for a smooth install**. The best way to accomplish this is through Group Policy.
+## Install
 
-In Windows versions 1909 and higher, Tamper Protection was added.
-**Tamper Protection must be disabled first, otherwise Group Policy settings are ignored.**
+### 1. Deploy a Windows VM
 
-1. Open Windows Security (type `Windows Security` in the search box)
-1. Virus & threat protection > Virus & threat protection settings > Manage settings
-1. Switch `Tamper Protection` to `Off` 
-> It is not necessary to change any other setting (`Real Time Protection`, etc.)
+Download a Windows 10 virtual machine from the [official source](https://www.microsoft.com/en-us/software-download/windows10ISO).
 
-> **Important!** Tamper Protection must be disabled before changing Group Policy settings.
+> You should never install CommandoVM on your host machine. It makes irreversible changes that cannot be uninstalled.
 
-To permanently disable Real Time Protection:
+### 2. Disable Windows Defender
 
-1. Make sure you disabled Tamper Protection
-1. Open Local Group Policy Editor (type `gpedit` in the search box)
-1. Computer Configuration > Administrative Templates > Windows Components > Microsoft Defender Antivirus > Real-time Protection
-1. Enable `Turn off real-time protection`
-1. **Reboot**
-> Make sure to **reboot** before making the next change
+Tamper Protection must be disabled **first**, otherwise Group Policy settings are ignored.
 
-To permanently disable Microsoft Defender:
+1. Open **Windows Security** → **Virus & threat protection** → **Manage settings**
+2. Switch **Tamper Protection** to **Off**
+3. Open **Local Group Policy Editor** (`gpedit`)
+4. Navigate to `Computer Configuration` → `Administrative Templates` → `Windows Components` → `Microsoft Defender Antivirus` → `Real-time Protection`
+5. Enable **Turn off real-time protection**
+6. **Reboot**
+7. Navigate to `Computer Configuration` → `Administrative Templates` → `Windows Components` → `Microsoft Defender Antivirus`
+8. Enable **Turn off Microsoft Defender Antivirus**
+9. **Reboot**
 
-1. Make sure you rebooted your machine
-1. Open Local Group Policy Editor (type `gpedit` in the search box)
-1. Computer Configuration > Administrative Templates > Windows Components > Microsoft Defender Antivirus
-1. Enable `Turn off Microsoft Defender Antivirus`
-1. **Reboot**
+> It is not necessary to change any other setting (Real Time Protection, etc.). Tamper Protection must be disabled before changing Group Policy settings.
 
-  [1]: https://stackoverflow.com/questions/62174426/how-to-permanently-disable-windows-defender-real-time-protection-with-gpo
+### 3. Run the Installer
 
-## Installation 
-1. Complete the pre-install procedures by disabling Defender
-1. Download and extract the zip of the Commando-VM repo
-1. Run PowerShell as Administrator
-1. `Set-ExecutionPolicy Unrestricted -force`
-1. `cd ~/Downloads/commando-vm`
-1. `Get-ChildItem .\ -Recurse | Unblock-File`
-1. `.\install.ps1` for a GUI install or `.\install.ps1 -cli` for command-line
+```powershell
+Set-ExecutionPolicy Unrestricted -Force
+cd ~/Downloads/commando-vm
+Get-ChildItem .\ -Recurse | Unblock-File
+.\install.ps1               # GUI install
+.\install.ps1 -cli          # Command-line install
+```
 
+Installation may take over an hour and will restart your machine multiple times. You are done when your background changes to the CommandoVM logo.
 
-## Contributing
-Looking to contribute? Check the links below to learn how!
+## Profiles
 
-### Commando-VM (this repository)
-- See our quick start guide to go from zero to Commando ASAP! [https://github.com/mandiant/commando-vm/blob/main/Docs/Commando_Quickstart_Guide.md](https://github.com/mandiant/commando-vm/blob/main/Docs/Commando_Quickstart_Guide.md)
+CommandoVM offers several installation profiles under the [`Profiles/`](Profiles/) directory. You can select one during the GUI install or pass it via `-customProfile`:
 
-### VM-Packages (where all the packages live)
-* [Repository of all tool packages (VM-packages)](https://github.com/mandiant/VM-Packages)
-* [Documentation and contribution guides for tool packages](https://github.com/mandiant/VM-Packages/wiki)
-* [Submit new tool packages or report package related issues](https://github.com/mandiant/VM-Packages/issues)
+```powershell
+.\install.ps1 -cli -customProfile .\Profiles\Default.xml -noPassword
+```
+
+See the [Customization](Docs/Customization.md) docs for the XML profile format.
 
 ## Troubleshooting
-See the ![troubleshooting documentation](https://github.com/mandiant/commando-vm/blob/main/Docs/Troubleshooting.md) for more information.
+
+Refer to the [Troubleshooting Guide](Docs/Troubleshooting.md) for detailed install help, including pre-install checks, Boxstarter password prompts, and common failure modes.
+
+## Quickstart Guide
+
+New to the project? The [CommandoVM Quickstart Guide](Docs/Commando_Quickstart_Guide.md) walks you through the architecture, the VM-Packages ecosystem, and how to start contributing.
+
+## Contributing
+
+CommandoVM is built from two interconnected repositories:
+
+- **commando-vm** (this repo) — installer, profiles, and documentation
+- **[VM-Packages](https://github.com/mandiant/VM-Packages)** — the tool packages and their install logic
+
+### How to help
+
+- Submit new tool packages or report package issues on the [VM-Packages issue tracker](https://github.com/mandiant/VM-Packages/issues)
+- Read the [VM-Packages wiki](https://github.com/mandiant/VM-Packages/wiki) for contribution guides
+- Check the [Quickstart Guide](Docs/Commando_Quickstart_Guide.md) to go from zero to contributor
 
 ## Credits
 
-- Jake Barteaux         @day1player
-- Blaine Stancill       @MalwareMechanic
-- Nhan Huynh            @htnhan
-- Drew Farber           @0xFarbs
-- Alex Tselevich        @nos3curity
-- George Litvinov       @geo-lit
-- Dennis Tran           @Menn1s
-- Joseph Clay           @skollr34p3r
-- Ana Martinez Gomez    @anamma_06
+- Jake Barteaux @day1player
+- Blaine Stancill @MalwareMechanic
+- Nhan Huynh @htnhan
+- Drew Farber @0xFarbs
+- Alex Tselevich @nos3curity
+- George Litvinov @geo-lit
+- Dennis Tran @Menn1s
+- Joseph Clay @skollr34p3r
+- Ana Martinez Gomez @anamma_06
 - Moritz Raabe
-- Derrick Tran          @dumosuku
+- Derrick Tran @dumosuku
 - Mandiant Red Team
 - Mandiant FLARE
 
-## Legal Notice
+## License
 
-```
-This download configuration script is provided to assist penetration testers
-in creating handy and versatile toolboxes for offensive engagements. It provides 
-a convenient interface for them to obtain a useful set of pentesting Tools directly 
-from their original sources. Installation and use of this script is subject to the 
-Apache 2.0 License.
- 
-You as a user of this script must review, accept and comply with the license
-terms of each downloaded/installed package listed below. By proceeding with the
-installation, you are accepting the license terms of each package, and
-acknowledging that your use of each package will be subject to its respective
-license terms.
-```
+This configuration script is provided under the [Apache 2.0 License](License.txt). Installation and use of this script is subject to the license terms of each downloaded/installed package. By proceeding with installation, you accept the license terms of each package and acknowledge that your use will be subject to its respective terms.
